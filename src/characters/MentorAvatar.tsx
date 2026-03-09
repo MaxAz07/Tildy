@@ -4,14 +4,17 @@ import normalImg from '@/data/Characters/ilias/normal.png';
 import questionImg from '@/data/Characters/ilias/question.png';
 import sadImg from '@/data/Characters/ilias/sad.png';
 
-type Emotion = 'happy' | 'angry' | 'normal' | 'question' | 'sad';
+export type Emotion = 'happy' | 'angry' | 'normal' | 'question' | 'sad';
 
 interface MentorAvatarProps {
   size?: 'sm' | 'md' | 'lg';
   emotion?: Emotion;
 }
 
-export const MentorAvatar: React.FC<MentorAvatarProps> = ({ size = 'md', emotion = 'normal' }) => {
+export const MentorAvatar: React.FC<MentorAvatarProps> = ({
+  size = 'md',
+  emotion = 'normal',
+}) => {
   const sizeMap = { sm: 40, md: 60, lg: 80 };
   const imgSize = sizeMap[size] || 60;
 
@@ -23,9 +26,11 @@ export const MentorAvatar: React.FC<MentorAvatarProps> = ({ size = 'md', emotion
     sad: sadImg,
   };
 
+  const imgEmotion = emotionMap[emotion] || normalImg;
+
   return (
     <img
-      src={emotionMap[emotion]}
+      src={imgEmotion}
       width={imgSize}
       height={imgSize}
       alt={emotion}

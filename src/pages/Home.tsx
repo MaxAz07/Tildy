@@ -320,7 +320,7 @@ export const Home: React.FC = () => {
   </button>
 
   <button
-    onClick={() => navigate('/dialog')}
+    onClick={() => navigate('/voice')}
     className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl flex flex-col items-center gap-2 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
   >
     <Users className="w-6 h-6 text-purple-500" />

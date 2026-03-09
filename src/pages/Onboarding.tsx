@@ -10,28 +10,32 @@ const onboardingSteps = [
     id: 1,
     title: 'Welcome to QazaqTili!',
     subtitle: 'Сәлеметсіз бе!',
-    message: 'I am Ilyas Zhansugurov, your guide on this exciting journey to learn the beautiful Kazakh language. Together, we will explore the rich culture and heritage of Kazakhstan.',
+    message:
+      'I am Ilyas Zhansugurov, your guide on this exciting journey to learn the beautiful Kazakh language. Together, we will explore the rich culture and heritage of Kazakhstan.',
     emotion: 'happy' as const,
   },
   {
     id: 2,
     title: 'Learn Through Play',
     subtitle: 'Ойын арқылы үйрену',
-    message: 'Our lessons are designed like games - complete challenges, earn XP, maintain your streak, and unlock new characters as you progress from A1 to C2 level.',
+    message:
+      'Our lessons are designed like games - complete challenges, earn XP, maintain your streak, and unlock new characters as you progress from A1 to C2 level.',
     emotion: 'excited' as const,
   },
   {
     id: 3,
     title: 'Practice with AI',
     subtitle: 'AI-мен практика жасау',
-    message: 'Chat with our AI companion to practice conversations anytime. Get instant feedback and improve your speaking skills in a safe, supportive environment.',
+    message:
+      'Chat with our AI companion to practice conversations anytime. Get instant feedback and improve your speaking skills in a safe, supportive environment.',
     emotion: 'thinking' as const,
   },
   {
     id: 4,
     title: 'Join the Community',
     subtitle: 'Қауымдастыққа қосылу',
-    message: 'Compete with learners worldwide in leagues, earn achievements, and celebrate your progress. Learning is more fun together!',
+    message:
+      'Compete with learners worldwide in leagues, earn achievements, and celebrate your progress. Learning is more fun together!',
     emotion: 'celebrating' as const,
   },
 ];
@@ -67,6 +71,9 @@ export const Onboarding: React.FC = () => {
   };
 
   const step = onboardingSteps[currentStep];
+
+  // Список допустимых эмоций для MentorAvatar
+  const allowedEmotions = ['happy', 'angry', 'normal', 'question', 'sad'] as const;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
@@ -112,8 +119,11 @@ export const Onboarding: React.FC = () => {
               <div className="flex justify-center mb-8">
                 <MentorAvatar
                   size="lg"
-                  emotion={step.emotion}
-                  isSpeaking={true}
+                  emotion={
+                    allowedEmotions.includes(step.emotion as any)
+                      ? (step.emotion as any)
+                      : 'normal'
+                  }
                 />
               </div>
 
@@ -129,7 +139,7 @@ export const Onboarding: React.FC = () => {
                   </h2>
                   <p className="text-xl text-green-500 font-medium mb-4">{step.subtitle}</p>
                 </motion.div>
-                
+
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}

@@ -5,12 +5,12 @@ import { leaderboardData, currentUserData } from '@/data/leaderboard';
 import { useAuth } from '@/context/AuthContext';
 
 const leagueTiers = [
-  { name: 'Bronze', color: '#CD7F32', minXp: 0 },
-  { name: 'Silver', color: '#C0C0C0', minXp: 1000 },
-  { name: 'Gold', color: '#FFD700', minXp: 3000 },
-  { name: 'Sapphire', color: '#0F52BA', minXp: 6000 },
-  { name: 'Ruby', color: '#E0115F', minXp: 10000 },
-  { name: 'Diamond', color: '#B9F2FF', minXp: 15000 },
+  { name: 'Бронза', color: '#CD7F32', minXp: 0 },
+  { name: 'Серебро', color: '#C0C0C0', minXp: 1000 },
+  { name: 'Золото', color: '#FFD700', minXp: 3000 },
+  { name: 'Сапфир', color: '#0F52BA', minXp: 6000 },
+  { name: 'Рубин', color: '#E0115F', minXp: 10000 },
+  { name: 'Алмаз', color: '#B9F2FF', minXp: 15000 },
 ];
 
 const getLeagueForXp = (xp: number) => {
@@ -45,34 +45,29 @@ export const League: React.FC = () => {
     ? ((stats.totalXp - currentLeague.minXp) / (nextLeague.minXp - currentLeague.minXp)) * 100
     : 100;
 
-  // Combine leaderboard with current user
   const allUsers = [...leaderboardData];
   const userInLeaderboard = allUsers.find(u => u.isCurrentUser);
   if (!userInLeaderboard) {
     allUsers.push({ ...currentUserData, xp: stats.totalXp });
   }
   
-  // Sort by XP
   const sortedUsers = allUsers.sort((a, b) => b.xp - a.xp);
   
-  // Update ranks
   sortedUsers.forEach((user, index) => {
     user.rank = index + 1;
   });
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-          Diamond League
+          Алмазная лига
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Compete with learners worldwide
+          Соревнуйтесь с учениками со всего мира
         </p>
       </div>
 
-      {/* League Progress */}
       <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
@@ -83,12 +78,12 @@ export const League: React.FC = () => {
               <Trophy className="w-8 h-8 text-white" />
             </div>
             <div>
-              <p className="text-white/80 text-sm">Current League</p>
+              <p className="text-white/80 text-sm">Текущая лига</p>
               <p className="text-2xl font-bold">{currentLeague.name}</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-white/80 text-sm">Your Rank</p>
+            <p className="text-white/80 text-sm">Ваш ранг</p>
             <p className="text-3xl font-bold">#{currentUserData.rank}</p>
           </div>
         </div>
@@ -96,7 +91,7 @@ export const League: React.FC = () => {
         {nextLeague && (
           <div>
             <div className="flex items-center justify-between text-sm mb-2">
-              <span>Progress to {nextLeague.name}</span>
+              <span>Прогресс до {nextLeague.name}</span>
               <span>{Math.round(progressToNext)}%</span>
             </div>
             <div className="h-3 bg-white/20 rounded-full overflow-hidden">
@@ -108,32 +103,30 @@ export const League: React.FC = () => {
               />
             </div>
             <p className="text-sm text-white/70 mt-2">
-              {nextLeague.minXp - stats.totalXp} XP needed for {nextLeague.name}
+              Нужно {nextLeague.minXp - stats.totalXp} XP для {nextLeague.name}
             </p>
           </div>
         )}
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow-md">
           <Zap className="w-6 h-6 text-yellow-500 mx-auto mb-2" />
           <p className="text-2xl font-bold text-gray-800 dark:text-white">{stats.totalXp}</p>
-          <p className="text-sm text-gray-500">Total XP</p>
+          <p className="text-sm text-gray-500">Всего XP</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow-md">
           <TrendingUp className="w-6 h-6 text-green-500 mx-auto mb-2" />
           <p className="text-2xl font-bold text-gray-800 dark:text-white">{stats.streak}</p>
-          <p className="text-sm text-gray-500">Day Streak</p>
+          <p className="text-sm text-gray-500">Дней подряд</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center shadow-md">
           <Users className="w-6 h-6 text-blue-500 mx-auto mb-2" />
           <p className="text-2xl font-bold text-gray-800 dark:text-white">{sortedUsers.length}</p>
-          <p className="text-sm text-gray-500">Competitors</p>
+          <p className="text-sm text-gray-500">Участники</p>
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-2">
         <button
           onClick={() => setActiveTab('weekly')}
@@ -143,7 +136,7 @@ export const League: React.FC = () => {
               : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
           }`}
         >
-          This Week
+          Эта неделя
         </button>
         <button
           onClick={() => setActiveTab('alltime')}
@@ -153,17 +146,16 @@ export const League: React.FC = () => {
               : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
           }`}
         >
-          All Time
+          За всё время
         </button>
       </div>
 
-      {/* Leaderboard */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <h3 className="font-semibold text-gray-800 dark:text-white">Leaderboard</h3>
+          <h3 className="font-semibold text-gray-800 dark:text-white">Таблица лидеров</h3>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Clock className="w-4 h-4" />
-            <span>Resets in 3 days</span>
+            <span>Сброс через 3 дня</span>
           </div>
         </div>
 
@@ -180,19 +172,16 @@ export const League: React.FC = () => {
                   : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
               }`}
             >
-              {/* Rank */}
               <div className="w-10 flex justify-center">
                 {getRankIcon(user.rank)}
               </div>
 
-              {/* Avatar */}
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                 <span className="text-white font-bold">
                   {user.name[0].toUpperCase()}
                 </span>
               </div>
 
-              {/* Name */}
               <div className="flex-1">
                 <p className={`font-semibold ${
                   user.isCurrentUser
@@ -202,13 +191,12 @@ export const League: React.FC = () => {
                   {user.name}
                   {user.isCurrentUser && (
                     <span className="ml-2 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">
-                      YOU
+                      ВЫ
                     </span>
                   )}
                 </p>
               </div>
 
-              {/* XP */}
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-yellow-500" />
                 <span className="font-bold text-gray-800 dark:text-white">
@@ -220,10 +208,9 @@ export const League: React.FC = () => {
         </div>
       </div>
 
-      {/* League Info */}
       <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6">
         <h3 className="font-semibold text-gray-800 dark:text-white mb-4">
-          League Tiers
+          Уровни лиги
         </h3>
         <div className="flex flex-wrap gap-3">
           {leagueTiers.map((tier) => (

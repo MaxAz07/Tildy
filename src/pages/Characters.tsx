@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Check, Star, ChevronRight, Sparkles } from 'lucide-react';
+import { motion} from 'framer-motion';
+import { Lock, ChevronRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/context/AuthContext';
@@ -29,32 +29,23 @@ const characters: Character[] = [
     level: 'A1',
     color: '#22C55E',
     unlockXp: 0,
-    description: 'Funny and friendly goat who helps you start learning.',
+    description: 'Весёлая и дружелюбный, помогает начать обучение.',
     descriptionKz: 'Оқуды бастауға көмектесетін көңілді ешкі.',
     image: kozaSmile,
     isKoza: true,
   },
-  { id: 'a1_2', name: 'Aruzhan', nameKz: 'Аружан', level: 'A1', color: '#06B6D4', unlockXp: 150, description: 'Encouraging mentor focused on pronunciation.', descriptionKz: 'Айтылымға бағытталған қолдаушы тәлімгер.' },
-  { id: 'a2_1', name: 'Dias', nameKz: 'Диас', level: 'A2', color: '#10B981', unlockXp: 400, description: 'Grammar builder with practical examples.', descriptionKz: 'Практикалық мысалдармен грамматиканы үйретеді.' },
-  { id: 'a2_2', name: 'Madina', nameKz: 'Мадина', level: 'A2', color: '#14B8A6', unlockXp: 700, description: 'Conversation-focused learning partner.', descriptionKz: 'Сөйлесу тәжірибесіне бағытталған серіктес.' },
-  { id: 'b1_1', name: 'Timur', nameKz: 'Тимур', level: 'B1', color: '#F59E0B', unlockXp: 1200, description: 'Expands vocabulary and real-world usage.', descriptionKz: 'Сөздік қорды және қолдануды кеңейтеді.' },
-  { id: 'b1_2', name: 'Amina', nameKz: 'Амина', level: 'B1', color: '#F97316', unlockXp: 1700, description: 'Interactive challenges and mini-games.', descriptionKz: 'Интерактивті тапсырмалар мен ойындар.' },
-  { id: 'b2_1', name: 'Nurlan', nameKz: 'Нұрлан', level: 'B2', color: '#8B5CF6', unlockXp: 2500, description: 'Teaches advanced structures and nuance.', descriptionKz: 'Күрделі құрылымдар мен мағыналық реңктер.' },
-  { id: 'b2_2', name: 'Kamila', nameKz: 'Камила', level: 'B2', color: '#A855F7', unlockXp: 3200, description: 'Debates, discussions and complex topics.', descriptionKz: 'Пікірталас пен күрделі тақырыптар.' },
-  { id: 'c1_1', name: 'Adil', nameKz: 'Әділ', level: 'C1', color: '#EF4444', unlockXp: 4200, description: 'Academic and professional fluency.', descriptionKz: 'Академиялық және кәсіби еркіндік.' },
-  { id: 'c1_2', name: 'Dana', nameKz: 'Дана', level: 'C1', color: '#DC2626', unlockXp: 5200, description: 'Precision speaking and argumentation.', descriptionKz: 'Нақты сөйлеу және дәлелдеу.' },
-  { id: 'c2_1', name: 'Sanzhar', nameKz: 'Санжар', level: 'C2', color: '#111827', unlockXp: 7000, description: 'Native-level mastery and expression.', descriptionKz: 'Тілдің толық шеберлігі.' },
-  { id: 'c2_2', name: 'Alina', nameKz: 'Алина', level: 'C2', color: '#1F2937', unlockXp: 9000, description: 'Elite mentor for perfect fluency.', descriptionKz: 'Мінсіз еркіндікке арналған элиталық ментор.' },
+  { id: 'a1_2', name: 'Aruzhan', nameKz: 'Аружан', level: 'A1', color: '#06B6D4', unlockXp: 150, description: 'Поддерживающий наставник, сосредоточенный на произношении.', descriptionKz: 'Айтылымға бағытталған қолдаушы тәлімгер.' },
+  { id: 'a2_1', name: 'Dias', nameKz: 'Диас', level: 'A2', color: '#10B981', unlockXp: 400, description: 'Помогает изучать грамматику на практических примерах.', descriptionKz: 'Практикалық мысалдармен грамматиканы үйретеді.' },
+  { id: 'a2_2', name: 'Madina', nameKz: 'Мадина', level: 'A2', color: '#14B8A6', unlockXp: 700, description: 'Партнёр по обучению, ориентированный на разговорную практику.', descriptionKz: 'Сөйлесу тәжірибесіне бағытталған серіктес.' },
+  { id: 'b1_1', name: 'Timur', nameKz: 'Тимур', level: 'B1', color: '#F59E0B', unlockXp: 1200, description: 'Расширяет словарный запас и практическое использование языка.', descriptionKz: 'Сөздік қорды және қолдануды кеңейтеді.' },
+  { id: 'b1_2', name: 'Amina', nameKz: 'Амина', level: 'B1', color: '#F97316', unlockXp: 1700, description: 'Интерактивные задания и мини-игры.', descriptionKz: 'Интерактивті тапсырмалар мен ойындар.' },
+  { id: 'b2_1', name: 'Nurlan', nameKz: 'Нұрлан', level: 'B2', color: '#8B5CF6', unlockXp: 2500, description: 'Обучает продвинутым конструкциям и нюансам языка.', descriptionKz: 'Күрделі құрылымдар мен мағыналық реңктер.' },
+  { id: 'b2_2', name: 'Kamila', nameKz: 'Камила', level: 'B2', color: '#A855F7', unlockXp: 3200, description: 'Дискуссии, дебаты и сложные темы.', descriptionKz: 'Пікірталас пен күрделі тақырыптар.' },
+  { id: 'c1_1', name: 'Adil', nameKz: 'Әділ', level: 'C1', color: '#EF4444', unlockXp: 4200, description: 'Академическое и профессиональное владение языком.', descriptionKz: 'Академиялық және кәсіби еркіндік.' },
+  { id: 'c1_2', name: 'Dana', nameKz: 'Дана', level: 'C1', color: '#DC2626', unlockXp: 5200, description: 'Точное выражение мыслей и аргументация.', descriptionKz: 'Нақты сөйлеу және дәлелдеу.' },
+  { id: 'c2_1', name: 'Sanzhar', nameKz: 'Санжар', level: 'C2', color: '#111827', unlockXp: 7000, description: 'Мастерство языка на уровне носителя.', descriptionKz: 'Тілдің толық шеберлігі.' },
+  { id: 'c2_2', name: 'Alina', nameKz: 'Алина', level: 'C2', color: '#1F2937', unlockXp: 9000, description: 'Элитный наставник для идеальной беглости.', descriptionKz: 'Мінсіз еркіндікке арналған элиталық ментор.' },
 ];
-
-const levelDescriptions: Record<Level, string> = {
-  A1: 'Beginner - Start your journey',
-  A2: 'Elementary - Build foundations',
-  B1: 'Intermediate - Expand knowledge',
-  B2: 'Upper Intermediate - Master complexity',
-  C1: 'Advanced - Achieve fluency',
-  C2: 'Mastery - Native-level proficiency',
-};
 
 export const Characters: React.FC = () => {
   const { stats } = useAuth();
@@ -68,7 +59,6 @@ export const Characters: React.FC = () => {
       ? 100
       : Math.min((stats.totalXp / selectedCharacter.unlockXp) * 100, 100);
 
-  // моргание козы
   useEffect(() => {
     if (!selectedCharacter.isKoza) return;
 
@@ -86,7 +76,7 @@ export const Characters: React.FC = () => {
       <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white/80 text-sm mb-1">Total XP Earned</p>
+            <p className="text-white/80 text-sm mb-1">Всего заработано XP</p>
             <p className="text-4xl font-bold">
               {stats.totalXp.toLocaleString()}
             </p>
@@ -173,7 +163,7 @@ export const Characters: React.FC = () => {
               {!isUnlocked && (
                 <div className="bg-gray-50 rounded-xl p-6 mt-6">
                   <div className="flex justify-between mb-3 text-sm">
-                    <span>Unlock Progress</span>
+                    <span>Прогресс разблокировки</span>
                     <span>
                       {stats.totalXp} / {selectedCharacter.unlockXp} XP
                     </span>
@@ -188,8 +178,8 @@ export const Characters: React.FC = () => {
                 disabled={!isUnlocked}
               >
                 {isUnlocked
-                  ? 'Start Learning with ' + selectedCharacter.name
-                  : 'Locked'}
+                  ? 'Начать обучение с ' + selectedCharacter.name
+                  : 'Заблокировано'}
               </Button>
             </div>
           </div>

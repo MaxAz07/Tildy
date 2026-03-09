@@ -1,124 +1,184 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mic, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { MentorAvatar } from "@/characters/MentorAvatar";
 
-type Message = { role: "user" | "assistant"; content: string };
+const SERVER_URL = "http://127.0.0.1:8000/chat";
 
-const WS_URL = "ws://127.0.0.1:8000/ws";
+type Message = {
+  role: "user" | "assistant";
+  text: string;
+};
 
 const VoiceChat: React.FC = () => {
-  const [lastReply, setLastReply] = useState("Сәлем! Не істегейді?");
-  const [history, setHistory] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: "assistant", text: "Сәлем! Сөйлесуге дайынмын 👋" }
+  ]);
+
   const [listening, setListening] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const [interimText, setInterimText] = useState("");
-  const [responseTime, setResponseTime] = useState<number | null>(null);
-  const wsRef = useRef<WebSocket | null>(null);
+
   const recognitionRef = useRef<any>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // ======================= WebSocket =======================
+  // автоскролл
   useEffect(() => {
-    const ws = new WebSocket(WS_URL);
-    ws.onopen = () => console.log("WS connected");
-    ws.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      if (data.text) {
-        setLastReply(data.text);
-        setHistory((prev) => [...prev, { role: "assistant", content: data.text }]);
-      }
-      if (data.audio) {
-        const audio = new Audio("data:audio/wav;base64," + data.audio);
-        audio.play();
-      }
-      if (data.time !== undefined) {
-        setResponseTime(data.time);
-      }
-      setIsTyping(false);
-    };
-    ws.onclose = () => console.log("WS closed");
-    wsRef.current = ws;
-    return () => ws.close();
-  }, []);
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-  // ======================= Голосовой ввод =======================
+  // голосовой ввод
   useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Speech recognition not supported");
+      return;
+    }
 
     const recognition = new SpeechRecognition();
+
     recognition.lang = "kk-KZ";
     recognition.interimResults = false;
     recognition.continuous = false;
 
-    recognition.onstart = () => {
-      setListening(true);
-      setInterimText("");
-    };
+    recognition.onstart = () => setListening(true);
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
-      setHistory((prev) => [...prev, { role: "user", content: transcript }]);
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "user", text: transcript }
+      ]);
+
       recognition.stop();
       setListening(false);
-      handleSendMessage(transcript);
+
+      sendMessage(transcript);
     };
 
     recognition.onend = () => setListening(false);
+
     recognitionRef.current = recognition;
   }, []);
 
-  // ======================= Отправка текста на сервер =======================
-  const handleSendMessage = (text: string) => {
+  // отправка на сервер
+  const sendMessage = async (text: string) => {
     if (!text.trim()) return;
+
     setIsTyping(true);
-    wsRef.current?.send(JSON.stringify({ text }));
+
+    try {
+      const resp = await fetch(SERVER_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text })
+      });
+
+      const data = await resp.json();
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: data.text }
+      ]);
+
+      if (data.audio) {
+        const audio = new Audio("data:audio/wav;base64," + data.audio);
+        audio.play();
+      }
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
-  // ======================= UI =======================
   return (
-    <div className="flex flex-col h-screen bg-slate-950 text-white overflow-hidden">
-      <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
+    <div className="flex flex-col items-center min-h-screen bg-white dark:bg-gray-950 px-4">
+
+      {/* Персонаж */}
+      <div className="mt-10 flex flex-col items-center">
+
         <motion.div
           animate={isTyping ? { scale: [1, 1.05, 1] } : {}}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="relative z-10"
         >
-          <div className="absolute inset-0 rounded-full border-4 border-emerald-500/30 blur-2xl animate-pulse" />
-          <MentorAvatar size="lg" emotion={isTyping ? "question" : "normal"} />
+          <MentorAvatar
+            size="lg"
+            emotion={isTyping ? "question" : "normal"}
+          />
         </motion.div>
 
         {isTyping && (
-          <div className="mt-8 flex items-center gap-3 text-emerald-400 font-medium">
-            <Loader2 className="animate-spin" size={24} />
-            <span className="text-lg">Ілияс ойлануда...</span>
+          <div className="flex items-center gap-2 mt-3 text-green-500">
+            <Loader2 className="animate-spin" size={20} />
+            Ілияс ойлануда...
           </div>
         )}
       </div>
 
-      <div className="bg-slate-900/95 border-t border-slate-800 p-10 pb-14 rounded-t-[50px] shadow-2xl">
-        <div className="max-w-xl mx-auto flex flex-col items-center gap-4 text-center">
-          <div className="min-h-[60px] w-full">
-            <p className="text-xl text-slate-200 leading-relaxed">
-              {listening ? <span className="text-emerald-400 italic">Тыңдап тұрмын...</span> : `"${lastReply}"`}
-            </p>
-            {responseTime !== null && !listening && (
-              <p className="text-sm text-slate-400 mt-1">Ответ за {responseTime} сек</p>
-            )}
-          </div>
+      {/* Чат */}
+      <div className="w-full max-w-xl flex-1 overflow-y-auto mt-10 space-y-4 pb-6">
 
-          <Button
-            onClick={() => recognitionRef.current?.start()}
-            disabled={isTyping || listening}
-            className={`h-24 w-24 rounded-full transition-all duration-500 flex items-center justify-center ${
-              listening ? "bg-red-500 scale-110 shadow-red-500/50" : "bg-emerald-600 shadow-emerald-500/20"
+        {messages.map((msg, index) => (
+
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`flex ${
+              msg.role === "user"
+                ? "justify-end"
+                : "justify-start"
             }`}
           >
-            <Mic size={40} />
-          </Button>
-        </div>
+
+            <div
+              className={`px-4 py-3 rounded-2xl text-lg max-w-[75%] ${
+                msg.role === "user"
+                  ? "bg-green-500 text-white"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white"
+              }`}
+            >
+              {msg.text}
+            </div>
+
+          </motion.div>
+
+        ))}
+
+        <div ref={chatEndRef} />
+
       </div>
+
+      {/* Кнопка микрофона */}
+      <div className="pb-10 pt-4 flex flex-col items-center">
+
+        <button
+          onClick={() => recognitionRef.current?.start()}
+          disabled={listening || isTyping}
+          className={`h-20 w-20 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
+            listening
+              ? "bg-red-500 scale-110"
+              : "bg-green-500 hover:bg-green-600"
+          }`}
+        >
+          <Mic size={32} className="text-white" />
+        </button>
+
+        {listening && (
+          <p className="mt-3 text-green-500 italic">
+            Тыңдап тұрмын...
+          </p>
+        )}
+
+      </div>
+
     </div>
   );
 };

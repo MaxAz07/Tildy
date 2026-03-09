@@ -357,7 +357,7 @@ export const Chat: React.FC = () => {
             <Button onClick={() => handleSend()} disabled={!inputMessage.trim() || isTyping} className="h-12 px-6 bg-green-500 hover:bg-green-600">
               <Send className="w-5 h-5" />
             </Button>
-          </div>я
+          </div>
         </div>
       </div>
     </div>

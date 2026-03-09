@@ -13,18 +13,14 @@ const RulesAndDictionaryPage: React.FC = () => {
       {/* Основной блок для правил */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md space-y-4">
         <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">
-          Здесь будут ваши правила
+          Здесь собраны все правила казахского языка
         </h2>
-        <p className="text-gray-600 dark:text-gray-300">
-          Пока что этот блок пустой. Позже сюда можно добавлять текст правил, советы по грамматике,
-          инструкции и любые заметки.
-        </p>
       </div>
 
       {/* Мини-блок словаря */}
       <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg shadow-md flex justify-between items-center">
         <p className="text-gray-800 dark:text-white font-medium">
-          Ваш словарь доступен отдельно
+          Словарь (9000 слов)
         </p>
         <button
           onClick={() => navigate('/dictionary')}
